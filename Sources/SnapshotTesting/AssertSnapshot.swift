@@ -16,8 +16,8 @@ public var isRecording = false
 /// Due to a name clash in Xcode 12, this has been renamed to `isRecording`.
 @available(*, deprecated, renamed: "isRecording")
 public var record: Bool {
-  get { isRecording }
-  set { isRecording = newValue }
+    get { isRecording }
+    set { isRecording = newValue }
 }
 
 /// Asserts that a given value matches a reference on disk.
@@ -220,10 +220,20 @@ public func verifySnapshot<Value, Format>(
     }
 
     let testName = sanitizePathComponent(testName)
-    let snapshotFileUrl =
-      snapshotDirectoryUrl
-      .appendingPathComponent("\(testName).\(identifier)")
-      .appendingPathExtension(snapshotting.pathExtension ?? "")
+
+       // Check the bundle for the resource first, then the file system
+        let thisBundle = Bundle(for: CleanCounterBetweenTestCases.self)
+        let resourcePath = thisBundle.path(forResource: "\(testName).\(identifier)",  ofType: snapshotting.pathExtension)
+        var snapshotFileUrlCandidate = resourcePath.map({ URL(fileURLWithPath: $0) })
+        if snapshotFileUrlCandidate == nil {
+            snapshotFileUrlCandidate = snapshotDirectoryUrl
+                .appendingPathComponent("\(testName).\(identifier)")
+                .appendingPathExtension(snapshotting.pathExtension ?? "")
+        }
+        guard let snapshotFileUrl = snapshotFileUrlCandidate else {
+            return nil
+        }
+
     let fileManager = FileManager.default
     try fileManager.createDirectory(at: snapshotDirectoryUrl, withIntermediateDirectories: true)
 
