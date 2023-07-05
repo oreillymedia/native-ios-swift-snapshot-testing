@@ -11,6 +11,10 @@ Delightful Swift snapshot testing.
 ![An example of a snapshot failure in Xcode.](.github/snapshot-test-1.png)
 -->
 
+## This is a fork
+
+It differs from the original in just one key way.  When looking for a snapshot resource (usually an image), it tries to load it from the test bundle first. Everything else _should_ be the same.
+
 ## Usage
 
 Once [installed](#installation), _no additional configuration is required_. You can import the `SnapshotTesting` module and call the `assertSnapshot` function.
