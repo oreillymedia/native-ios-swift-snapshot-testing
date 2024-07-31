@@ -277,7 +277,7 @@ public func verifySnapshot<Value, Format>(
          // But, if we're recording, don't bother checking the bundle, since we aren't comparing it to anything, and
          // want the new file to be generated in the source directory, not the bundle.
          var snapshotFileUrlCandidate: URL?
-         if !recording {
+        if record != .never {
              let thisBundle = Bundle(for: CleanCounterBetweenTestCases.self)
              let resourcePath = thisBundle.path(forResource: "\(testName).\(identifier)",  ofType: snapshotting.pathExtension)
              snapshotFileUrlCandidate = resourcePath.map({ URL(fileURLWithPath: $0) })
