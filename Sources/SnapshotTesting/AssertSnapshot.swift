@@ -272,10 +272,25 @@ public func verifySnapshot<Value, Format>(
       }
 
       let testName = sanitizePathComponent(testName)
-      let snapshotFileUrl =
-        snapshotDirectoryUrl
-        .appendingPathComponent("\(testName).\(identifier)")
-        .appendingPathExtension(snapshotting.pathExtension ?? "")
+
+         // Check the bundle for the resource first, then the file system
+         // But, if we're recording, don't bother checking the bundle, since we aren't comparing it to anything, and
+         // want the new file to be generated in the source directory, not the bundle.
+         var snapshotFileUrlCandidate: URL?
+         if !recording {
+             let thisBundle = Bundle(for: CleanCounterBetweenTestCases.self)
+             let resourcePath = thisBundle.path(forResource: "\(testName).\(identifier)",  ofType: snapshotting.pathExtension)
+             snapshotFileUrlCandidate = resourcePath.map({ URL(fileURLWithPath: $0) })
+         }
+         if snapshotFileUrlCandidate == nil {
+             snapshotFileUrlCandidate = snapshotDirectoryUrl
+                 .appendingPathComponent("\(testName).\(identifier)")
+                 .appendingPathExtension(snapshotting.pathExtension ?? "")
+         }
+         guard let snapshotFileUrl = snapshotFileUrlCandidate else {
+             return nil
+         }
+
       let fileManager = FileManager.default
       try fileManager.createDirectory(at: snapshotDirectoryUrl, withIntermediateDirectories: true)
 
