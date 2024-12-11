@@ -323,11 +323,13 @@ public func verifySnapshot<Value, Format>(
       var snapshotFileUrlCandidate: URL?
       if record != .all {
         let thisBundle = Bundle(for: CleanCounterBetweenTestCases.self)
-        let resourcePath = thisBundle.path(forResource: "\(testName).\(identifier)",  ofType: snapshotting.pathExtension)
+        let resourcePath = thisBundle.path(
+          forResource: "\(testName).\(identifier)", ofType: snapshotting.pathExtension)
         snapshotFileUrlCandidate = resourcePath.map({ URL(fileURLWithPath: $0) })
       }
       if snapshotFileUrlCandidate == nil {
-        snapshotFileUrlCandidate = snapshotDirectoryUrl
+        snapshotFileUrlCandidate =
+          snapshotDirectoryUrl
           .appendingPathComponent("\(testName).\(identifier)")
           .appendingPathExtension(snapshotting.pathExtension ?? "")
       }
